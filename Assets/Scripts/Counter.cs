@@ -1,37 +1,50 @@
+using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 public class Counter : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _countText;
+    private float _startNumber = 0;
+    private bool _isCounting = false;
+    private Coroutine _coroutineCounter;
 
-    private float _startCount = 0;
-    private float _currentCount;
-    private bool counting = false;
+    public event Action Changed;
+
+    public float CurrentNumber { get; private set; }
 
     private void Start()
     {
-        _countText.text = _startCount.ToString();
-        _currentCount = _startCount;
-        StartCoroutine(CountRoutine());
+        CurrentNumber = _startNumber;
+
+        if(_coroutineCounter != null)
+        {
+            StopCoroutine(_coroutineCounter);
+        }
+
+        _coroutineCounter = StartCoroutine(IncreaseNumber());
     }
 
-    public void ToggleCounting()
+    private void Update()
     {
-        counting = !counting;
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isCounting = !_isCounting;
+        }
     }
 
-    private IEnumerator CountRoutine()
+    private IEnumerator IncreaseNumber()
     {
+        var delay = new WaitForSeconds(0.5f);
+
         while (true)
         {
-            if (counting)
+            if (_isCounting)
             {
-                _currentCount += 0.5f;
-                _countText.text = _currentCount.ToString();
+                CurrentNumber++;
+                Changed?.Invoke();
             }
-            yield return new WaitForSeconds(0.5f);
+
+            yield return delay;
         }
     }
 }
