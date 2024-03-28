@@ -34,7 +34,8 @@ public class Counter : MonoBehaviour
 
     private IEnumerator IncreaseNumber()
     {
-        var delay = new WaitForSeconds(0.5f);
+        float timeToDekay = 0.5f;
+        var delay = new WaitForSeconds(timeToDekay);
 
         while (true)
         {
